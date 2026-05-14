@@ -142,3 +142,5 @@ Use clear commit messages such as:
 Data commits should be made by the teammate responsible for preprocessing.
  
 - Initial commit: Added data preparation and tokenization notebooks. Consolidated pipeline and plots for Ar/En comparison. 
+ 
+- Fix: Uploaded Week 1 notebooks (01_data_prep and 02_analysis) for dataset cleaning, BPE tokenization, and EDA plots. 
