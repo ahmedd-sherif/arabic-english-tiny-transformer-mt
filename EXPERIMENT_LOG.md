@@ -140,3 +140,5 @@ Use clear commit messages such as:
 - `Add midterm report draft`
 
 Data commits should be made by the teammate responsible for preprocessing.
+ 
+- Initial commit: Added data preparation and tokenization notebooks. Consolidated pipeline and plots for Ar/En comparison. 
