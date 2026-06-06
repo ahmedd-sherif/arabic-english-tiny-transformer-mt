@@ -1,0 +1,17 @@
+{
+  "train_examples": 49441,
+  "validation_examples": 869,
+  "epochs_completed": 40,
+  "total_training_time": "5h 9m 18s",
+  "best_epoch": 40,
+  "final_train_loss": 3.420148577309761,
+  "best_validation_loss": 4.016554656881669,
+  "final_validation_loss": 4.016554656881669,
+  "transformer_bleu": 6.239936884711959,
+  "baseline_bleu": 4.6886371589218525,
+  "transformer_beats_baseline": true,
+  "evaluation_available": true,
+  "cpu_cores": 28,
+  "torch_threads": 27,
+  "dataloader_workers_used": 0
+}
