@@ -1,0 +1,7 @@
+split,language,min,mean,median,p95,max
+train,ar,1,21.64,17.0,51.0,189
+train,en,2,23.24,19.0,54.0,183
+validation,ar,1,23.64,19.0,55.65,112
+validation,en,3,26.06,21.0,64.0,121
+test,ar,1,20.84,17.0,49.0,128
+test,en,2,22.27,19.0,51.0,121

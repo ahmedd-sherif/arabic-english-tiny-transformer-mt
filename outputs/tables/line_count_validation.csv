@@ -1,0 +1,4 @@
+split,arabic_lines,english_lines,line_count_match,empty_arabic,empty_english
+train,50000,50000,True,0,0
+validation,888,888,True,0,0
+test,8567,8567,True,0,0

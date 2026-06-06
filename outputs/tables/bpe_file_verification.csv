@@ -1,0 +1,7 @@
+split,lang,tokens,not_in_vocab,pct
+train,ar,1082196,1699,0.157
+validation,ar,20991,46,0.219
+test,ar,178508,332,0.186
+train,en,1162238,0,0.0
+validation,en,23138,1,0.004
+test,en,190795,3,0.002

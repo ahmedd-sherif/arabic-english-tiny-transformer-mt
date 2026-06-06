@@ -1,0 +1,4 @@
+split,total_examples,kept_examples,filtered_long_examples,max_len
+train,50000,49441,559,80
+validation,888,869,19,80
+test,8567,8491,76,80
