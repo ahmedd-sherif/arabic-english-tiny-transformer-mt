@@ -1,0 +1,2 @@
+experiment_id,best_epoch,best_val_loss,greedy_bleu,greedy_chrf,beam3_bleu,beam3_chrf
+E2_label_smoothing_0p1,39,4.7029,6.0798,25.0642,7.3685,25.3485

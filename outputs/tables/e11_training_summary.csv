@@ -1,0 +1,2 @@
+experiment_id,name,params,best_epoch,best_val_loss,greedy_bleu,greedy_chrf,beam3nr3_bleu,beam3nr3_chrf,greedy_rep_pct
+E11,E11 LR warmup,4006208,40,4.2306,3.6028,20.2534,5.6777,22.8403,58.2

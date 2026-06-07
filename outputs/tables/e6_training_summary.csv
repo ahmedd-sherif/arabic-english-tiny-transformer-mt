@@ -1,0 +1,2 @@
+experiment_id,name,params,best_epoch,best_val_loss,greedy_bleu,greedy_chrf,beam3nr3_bleu,beam3nr3_chrf,greedy_rep_pct
+E6,E6 weight tying,2982208,40,4.1717,5.559,23.632,7.7168,25.5947,59.5
