@@ -1,0 +1,2 @@
+experiment_id,name,params,best_epoch,best_val_loss,greedy_bleu,greedy_chrf,beam3nr3_bleu,beam3nr3_chrf,greedy_rep_pct
+E3,E3 AdamW wd1e-4,4006208,39,4.0062,5.7519,24.5782,7.9076,26.9301,51.9

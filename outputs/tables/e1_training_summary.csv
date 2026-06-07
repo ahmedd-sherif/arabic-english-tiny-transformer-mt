@@ -1,0 +1,2 @@
+experiment_id,name,params,best_epoch,best_val_loss,greedy_bleu,greedy_chrf,beam3nr3_bleu,beam3nr3_chrf,greedy_rep_pct
+E1,E1 dropout 0.3,4006208,39,4.2927,2.6504,18.3066,4.6882,21.1459,63.1
