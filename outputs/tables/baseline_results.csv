@@ -1,0 +1,2 @@
+model,decoding,examples,bleu,chrf_pp
+dictionary_position_baseline,position_dictionary,8491,4.7777,25.6503

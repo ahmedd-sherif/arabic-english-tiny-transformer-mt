@@ -1,0 +1,2 @@
+model,bleu_1000,bleu_full,delta_bleu,chrf_1000,chrf_full
+tiny_transformer_best,6.2399,6.2172,-0.0227,24.2011,24.6435

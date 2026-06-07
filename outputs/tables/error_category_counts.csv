@@ -1,0 +1,7 @@
+error_category,count
+repetition,4228
+adequate,2801
+low overlap,1172
+severe omission,194
+over-generation,95
+empty/degenerate,1

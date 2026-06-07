@@ -1,0 +1,5 @@
+error_category,count
+word order errors,20
+generic phrase repetition,2
+unknown/rare words,2
+named entity errors,1
