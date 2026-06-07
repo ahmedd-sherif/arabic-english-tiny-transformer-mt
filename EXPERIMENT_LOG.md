@@ -110,9 +110,70 @@ Each run should include:
   - `outputs/translations/transformer_samples.csv`
 - Notes: Punctuation-only repetition mostly disappeared, but generic phrase repetition remained. More training is needed before using this as the main project result.
 
+## Final-Phase Runs (2026-06)
+
+All runs below were AI-assisted; GenAI use is disclosed in `GenAI_Usage_Statement.md`. All
+evaluation is sacreBLEU (BLEU) and chrF++ on detokenized English over the filtered test set
+(8,491 examples) unless a 1,000-example subset is noted.
+
+### Run 007 - Full 50k / 40-epoch Tiny Transformer (main model)
+- Date: 2026-05-14 | Owner: Ahmed Sherif
+- Train 49,441 / val 869; 40 epochs, CPU, ~5h 9m; ~4.0M params (4,006,208 trainable).
+- Best epoch 40; best/final val loss 4.0166.
+- Output: `outputs/checkpoints/best_full_model.pt`, `outputs/tables/full_training_log.csv`.
+
+### Run 008 - Full-test evaluation + chrF++
+- Owner: Eid Abdelrahim
+- Dictionary baseline: BLEU 4.7777 / chrF++ 25.6503.
+- Tiny Transformer greedy: BLEU 6.2172 / chrF++ 24.6435 (repetition ~49.8%).
+- Sampling variance: BLEU 1,000-subset vs full differs < 0.07 (subset was representative).
+- Output: `full_test_bleu_results.csv`, `sample_vs_full_eval.csv`, `full_test_predictions.csv`.
+
+### Run 009 - CPU / DataLoader benchmark
+- Owner: Ahmed Sherif
+- 8 torch threads fastest (~200 samples/s); `cores-1` ~44% slower; DataLoader workers give no
+  gain and hang in-notebook on Windows. Chosen: `TORCH_THREADS=min(8,CPU_CORES)`, `workers=0`.
+- Output: `outputs/tables/cpu_dataloader_benchmark.csv` (visible in notebook 04).
+
+### Run 010 - E13 beam search (decoding, no retrain)
+- Owner: Ahmed Sherif | beam 1/3/5, length penalty 0.6/1.0.
+- Best beam3 lp1.0: full-test BLEU 7.5338 / chrF++ 24.9288.
+
+### Run 011 - E14 no_repeat_ngram decoding (no retrain)
+- Owner: Ahmed Sherif | beam3 lp1.0 no_repeat_ngram_size=3.
+- Full-test BLEU 7.7095 / chrF++ 26.5320; repetition 49.8% -> 15.3%. Biggest single improvement.
+
+### Run 012 - E2 label smoothing 0.1 (training)
+- Owner: Ahmed Sherif | 40 epochs, only change ls=0.1.
+- greedy 6.08/25.06; beam3-nr3 7.37/25.35; repetition rose to 54.1%. NEGATIVE for the goal.
+
+### Run 013 - E11 LR warmup (training)
+- Owner: Ahmed Sherif | inverse-sqrt warmup, warmup_steps=2000, peak 3e-4.
+- greedy 3.60/20.25; beam3-nr3 5.68/22.84. NEGATIVE (LR decayed too low -> undertrained).
+
+### Run 014 - E1 dropout 0.3 (training)
+- Owner: Ahmed Abdelhameed | greedy 2.65/18.31; beam3-nr3 4.69/21.15. NEGATIVE (over-regularized).
+
+### Run 015 - E3 AdamW, weight_decay 1e-4 (training)
+- Owner: Ahmed Abdelhameed | best val loss 4.0062 (beats original 4.0166).
+- greedy 5.75/24.58; beam3-nr3 7.91/26.93. Only training change that helped.
+
+### Run 016 - E6 weight tying (training)
+- Owner: Ahmed Sherif | 2,982,208 params (-25%); beam3-nr3 7.72/25.59. Efficiency, not quality.
+
+### Run 017 - E15 final decoding sweep on the E3 checkpoint (no retrain)
+- Owner: Ahmed Sherif | beam/length-penalty/no_repeat sweep on `outputs/checkpoints/e3/best.pt`.
+- **Best: beam3 lp1.2 nr3 -> full-test BLEU 8.1231 / chrF++ 27.6255 (repetition 19.2%).**
+
+### Final model
+**E3 (AdamW, weight_decay 1e-4) + beam=3, length_penalty=1.2, no_repeat_ngram_size=3 ->
+BLEU 8.1231 / chrF++ 27.6255** on the 8,491-sentence test set; beats the dictionary baseline on
+both metrics. Decoding (`no_repeat_ngram`) was the biggest lever; among training changes only
+AdamW helped. See `outputs/tables/final_ablation_results.csv` and `report_notes/ablation_notes.md`.
+
 ## Pending Runs
 
-### Planned - Tiny Transformer 10k Extended Run
+### Planned - Tiny Transformer 10k Extended Run (SUPERSEDED by Run 007, the full 40-epoch run)
 
 - Training subset: 10000 examples
 - Validation subset: full filtered validation set, 869 examples
