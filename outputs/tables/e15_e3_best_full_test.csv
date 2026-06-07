@@ -1,0 +1,4 @@
+name,beam,lp,no_repeat_ngram,examples,bleu,chrf_pp,repetition,repetition_pct,decode_min
+beam3 lp1.2 nr3,3,1.2,3,8491,8.1231,27.6255,1630,19.2,5.5
+beam5 lp1.2 nr3,5,1.2,3,8491,8.0878,27.4195,1479,17.4,8.9
+beam3 lp1.0 nr3,3,1.0,3,8491,7.9076,26.9301,1391,16.4,5.4

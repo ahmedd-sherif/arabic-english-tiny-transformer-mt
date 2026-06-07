@@ -1,0 +1,2 @@
+model,decoding,examples,bleu,chrf_pp,decode_seconds
+tiny_transformer_best,beam3_lp1.0,8491,7.5338,24.9288,817.4

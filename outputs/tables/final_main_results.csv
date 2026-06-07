@@ -1,0 +1,18 @@
+model,training_data,parameters,decoding,bleu_full,chrf_pp_full,bleu_1000,chrf_pp_1000,training_time,best_val_loss,test_examples,notes
+dictionary_position_baseline,50k,,position_dictionary,4.7777,25.6503,4.7137,25.5561,,,8491,Weak lexical lower bound; wins chrF++ but not BLEU
+tiny_transformer_best,49441,4006208,greedy,6.2172,24.6435,6.2399,24.2011,5h 9m 18s,4.0166,8491,Best=epoch40 (undertrained); ~50% outputs show repetition
+tiny_transformer_best,49441,4006208,beam3_lp1.0,7.5338,24.9288,7.6318,24.7841,5h 9m 18s,4.0166,8491,E13 beam search (no retrain); +1.32 BLEU / +0.29 chrF++ over greedy
+e2_label_smoothing_0p1,49441,4006208,greedy,6.0798,25.0642,6.1006,24.8236,~3.2h,4.7029,8491,E2 ls=0.1; chrF++ up vs orig greedy but BLEU down; repetition NOT reduced (54.1% vs 49.8%); val_loss not comparable (smoothed)
+e2_label_smoothing_0p1,49441,4006208,beam3_lp1.0,7.3685,25.3485,7.5562,25.2769,~3.2h,4.7029,8491,E2 beam3; best transformer chrF++ (still < baseline 25.65); BLEU below original beam3 7.53
+tiny_transformer_best,49441,4006208,beam3_lp1.0_nr3,7.7095,26.5320,7.5944,26.3897,5h 9m 18s,4.0166,8491,E14 no_repeat_ngram=3 (no retrain); BEST overall; beats baseline on BOTH metrics; repetition 49.8%->15.3%
+tiny_transformer_best,49441,4006208,beam5_lp1.0_nr3,7.6097,26.1152,7.6441,26.1775,5h 9m 18s,4.0166,8491,E14 beam5 nr3 (no retrain); rep 12.4%; slightly below beam3_nr3
+e11_lr_warmup,49441,4006208,greedy,3.6028,20.2534,3.7494,20.2389,~3.2h,4.2306,8491,E11 warmup inv-sqrt ws2000; WORSE than original (LR decayed too low); rep 58.2%; does NOT beat E14
+e11_lr_warmup,49441,4006208,beam3_lp1.0_nr3,5.6777,22.8403,5.6484,22.7283,~3.2h,4.2306,8491,E11 + nr3 decoding; 5.68/22.84 well below E14 7.71/26.53
+e1_dropout_0p3,49441,4006208,greedy,2.6504,18.3066,2.9454,18.4709,~3.2h,4.2927,8491,E1 dropout 0.3; OVER-regularized/underfit; rep 63.1%; worst trained model; does NOT beat E14
+e1_dropout_0p3,49441,4006208,beam3_lp1.0_nr3,4.6882,21.1459,4.8974,21.2504,~3.2h,4.2927,8491,E1 + nr3 decoding; 4.69/21.15 far below E14 7.71/26.53
+e3_adamw_wd1e-4,49441,4006208,greedy,5.7519,24.5782,5.8417,24.4014,~3.2h,4.0062,8491,E3 AdamW wd1e-4; val 4.006 (beats orig 4.017); greedy slightly below orig; rep 51.9%
+e3_adamw_wd1e-4,49441,4006208,beam3_lp1.0_nr3,7.9076,26.9301,8.0491,26.6362,~3.2h,4.0062,8491,E3 + nr3; beats E14; superseded as final by E15 lp1.2; rep 16.4%
+e3_adamw_wd1e-4,49441,4006208,beam3_lp1.2_nr3,8.1231,27.6255,8.2949,27.3190,~3.2h,4.0062,8491,E15 FINAL/BEST = E3 + beam3 lp1.2 nr3 (decoding-only); BLEU 8.12 chrF++ 27.63; +0.22/+0.70 over lp1.0; rep 19.2%
+e3_adamw_wd1e-4,49441,4006208,beam5_lp1.2_nr3,8.0878,27.4195,8.2369,27.0561,~3.2h,4.0062,8491,E15 beam5 lp1.2 nr3; ~ties beam3 lp1.2 but slower; rep 17.4%
+e6_weight_tying,49441,2982208,greedy,5.5590,23.6320,5.7007,23.4548,~3.1h,4.1717,8491,E6 weight tying (2.98M params, -25%); val 4.17 (worse than orig); rep 59.5%
+e6_weight_tying,49441,2982208,beam3_lp1.0_nr3,7.7168,25.5947,7.4898,25.3997,~3.1h,4.1717,8491,E6 + nr3; ~ties orig/E14 on BLEU (7.72) lower chrF; efficiency win (fewer params) not quality; below E3

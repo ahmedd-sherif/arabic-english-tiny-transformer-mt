@@ -1,0 +1,11 @@
+system,decoding,params,bleu,chrf_pp,rep_pct
+E3 AdamW wd1e-4 (E15 FINAL),beam3 lp1.2 nr3,4006208.0,8.1231,27.6255,19.2
+E3 AdamW wd1e-4,beam3 lp1.0 nr3,4006208.0,7.9076,26.9301,16.4
+E6 weight tying,beam3 lp1.0 nr3,2982208.0,7.7168,25.5947,17.4
+E14 (original),beam3 lp1.0 nr3,4006208.0,7.7095,26.532,15.3
+Original Transformer,beam3 lp1.0,4006208.0,7.5338,24.9288,
+E2 label smoothing,beam3 lp1.0 (no nr),4006208.0,7.3685,25.3485,
+Original Transformer,greedy,4006208.0,6.2172,24.6435,49.8
+E11 LR warmup,beam3 lp1.0 nr3,4006208.0,5.6777,22.8403,18.7
+Dictionary baseline,position dict,,4.7777,25.6503,
+E1 dropout 0.3,beam3 lp1.0 nr3,4006208.0,4.6882,21.1459,18.6
