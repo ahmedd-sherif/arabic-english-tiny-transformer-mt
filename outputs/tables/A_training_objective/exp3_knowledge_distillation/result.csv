@@ -1,0 +1,2 @@
+experiment,category,bleu,chrf_pp,rep_pct,best_val_loss
+Exp 3: knowledge distillation,A. Training objective,3.2067,20.7479,50.9,5.2791
