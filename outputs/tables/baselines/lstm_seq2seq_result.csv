@@ -1,0 +1,2 @@
+experiment,category,bleu,chrf_pp,rep_pct,best_val_loss
+LSTM seq2seq (greedy),Baselines,9.5538,30.318,28.3,4.1219
