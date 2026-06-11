@@ -1,0 +1,2 @@
+experiment,category,bleu,chrf_pp,rep_pct,best_val_loss
+BPE vocab 4000,E. Data,6.851,25.2551,45.8,3.7498
