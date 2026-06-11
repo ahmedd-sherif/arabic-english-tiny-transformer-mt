@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Notebooks / editor
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# Logs, checkpoints, and heavy generated outputs
+outputs/checkpoints/
+outputs/logs/
+experiments/*/checkpoints/
+experiments/*/logs/
+*.pt
+*.pth
+
+# Full data stays owned by the preprocessing teammate's commit plan.
+# Remove this ignore later only when the data owner is ready to stage it.
+Data/
+
+# OS
+.DS_Store
+Thumbs.db
+.venv_gpu/
+
+# Transient/AI-assistance build scripts and intermediates (not deliverables)
+scripts/
+_notebook_backups/
+draw_diagrams.py
+generate_latex.py
+inject_theory.py
+fix_latex.py
+experiments_generated.tex
+nb_markdown.txt
+memory.md
+tectonic.exe
+tectonic.zip
+*.code-workspace

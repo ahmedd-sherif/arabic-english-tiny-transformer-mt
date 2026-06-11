@@ -1,0 +1,23 @@
+category,experiment,bleu,chrf_pp,rep_pct
+B. Regularization,Exp 2: weight decay 1e-4,18.7879,41.0371,4.8
+F. Combined,Combined: wd+ls+tie+warmup,12.1496,33.0749,14.5
+D. Architecture,Exp 5: 3 layers,9.633,30.4201,13.8
+A. Training objective,Exp 1: label smoothing 0.1,9.0322,28.517,13.1
+D. Architecture,Exp 2: 4+4 layers,8.8564,29.311,13.4
+D. Architecture,Exp 7: GELU activation,8.7843,28.6671,14.1
+C. Optimization,Exp 1: AdamW wd 1e-4,8.6136,28.237,14.8
+E. Data,Exp 4: rare-word aug,8.2235,27.634,12.6
+A. Training objective,Exp 2: focal loss,8.1698,27.3715,10.3
+C. Optimization,Exp 4: curriculum,8.0061,27.5239,11.2
+Reference,baseline (Adam),7.9885,26.8619,10.1
+B. Regularization,Exp 3: R-Drop,7.9508,26.9164,11.6
+D. Architecture,Exp 1: weight tying,7.9453,26.5252,12.6
+C. Optimization,Exp 3: cosine scheduler,7.6453,26.5824,13.6
+D. Architecture,Exp 3: d_model 256,7.3306,25.7334,9.1
+D. Architecture,Exp 6: d_model 64,7.1854,25.339,16.5
+C. Optimization,Exp 2: LR warmup,6.0988,23.665,15.0
+B. Regularization,Exp 1: dropout 0.3,6.0312,23.6215,16.7
+D. Architecture,Exp 4: 1 layer,5.1813,20.1282,8.2
+E. Data,Exp 3: data 25K,4.7918,21.2863,16.4
+E. Data,Exp 2: data 10K,2.0612,17.2101,15.9
+E. Data,Exp 1: data 5K,1.6609,15.7683,14.0

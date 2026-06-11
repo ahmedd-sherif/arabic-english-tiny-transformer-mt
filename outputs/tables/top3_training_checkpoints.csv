@@ -1,0 +1,4 @@
+category,experiment,bleu,chrf_pp,rep_pct,checkpoint
+B. Regularization,Exp 2: weight decay 1e-4,18.7879,41.0371,4.8,outputs/checkpoints/B_regularization/exp2_weight_decay/best.pt
+F. Combined,Combined: wd+ls+tie+warmup,12.1496,33.0749,14.5,outputs/checkpoints/F_combined/exp1_combined/best.pt
+D. Architecture,Exp 5: 3 layers,9.633,30.4201,13.8,outputs/checkpoints/D_architecture/exp5_depth3/best.pt
