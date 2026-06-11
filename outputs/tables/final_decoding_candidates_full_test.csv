@@ -1,0 +1,4 @@
+experiment,config,bleu,chrf_pp,rep_pct,n
+Exp 2: weight decay 1e-4,beam10 lp1.2 nr3,19.9069,42.2428,4.6,8491
+Combined: wd+ls+tie+warmup,beam3 lp0.8 nr3,12.3177,32.9156,16.6,8491
+Exp 5: 3 layers,beam10 lp1.2 nr3,9.7697,30.8195,15.0,8491

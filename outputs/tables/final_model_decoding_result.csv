@@ -1,0 +1,2 @@
+final_model,decoding,test_examples,bleu,chrf_pp,rep_pct
+Exp 2: weight decay 1e-4,beam10 lp1.2 nr3,8491,19.9069,42.2428,4.6

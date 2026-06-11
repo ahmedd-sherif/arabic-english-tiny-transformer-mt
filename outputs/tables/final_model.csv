@@ -1,0 +1,2 @@
+final_model,local_id,old_id,decoding,test_examples,bleu,chrf_pp,rep_pct
+Label smoothing 0.1,T-D,E2,beam3 lp1.2 nr3,8491,9.2001,29.0749,19.1

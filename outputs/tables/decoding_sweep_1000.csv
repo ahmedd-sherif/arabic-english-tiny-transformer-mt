@@ -1,0 +1,22 @@
+experiment,config,bleu,chrf_pp,rep_pct
+Exp 2: weight decay 1e-4,greedy,17.7212,39.8874,15.5
+Exp 2: weight decay 1e-4,beam3 lp1.0 nr0,18.8708,41.0998,14.3
+Exp 2: weight decay 1e-4,beam3 lp1.0 nr3,18.7879,41.0371,4.8
+Exp 2: weight decay 1e-4,beam3 lp0.8 nr3,18.919,40.9118,4.8
+Exp 2: weight decay 1e-4,beam3 lp1.2 nr3,18.6425,41.1195,4.8
+Exp 2: weight decay 1e-4,beam5 lp1.2 nr3,19.2228,41.514,4.5
+Exp 2: weight decay 1e-4,beam10 lp1.2 nr3,19.3666,41.7021,4.1
+Combined: wd+ls+tie+warmup,greedy,10.723,31.3324,36.1
+Combined: wd+ls+tie+warmup,beam3 lp1.0 nr0,11.6387,32.2909,34.1
+Combined: wd+ls+tie+warmup,beam3 lp1.0 nr3,12.1496,33.0749,14.5
+Combined: wd+ls+tie+warmup,beam3 lp0.8 nr3,12.3328,32.743,14.2
+Combined: wd+ls+tie+warmup,beam3 lp1.2 nr3,11.9505,33.3162,15.8
+Combined: wd+ls+tie+warmup,beam5 lp1.2 nr3,12.0632,33.2752,15.3
+Combined: wd+ls+tie+warmup,beam10 lp1.2 nr3,12.1003,33.3994,14.5
+Exp 5: 3 layers,greedy,7.5199,28.1226,48.1
+Exp 5: 3 layers,beam3 lp1.0 nr0,9.1653,28.8222,44.1
+Exp 5: 3 layers,beam3 lp1.0 nr3,9.633,30.4201,13.8
+Exp 5: 3 layers,beam3 lp0.8 nr3,9.5352,30.1962,13.3
+Exp 5: 3 layers,beam3 lp1.2 nr3,9.5665,30.7992,14.7
+Exp 5: 3 layers,beam5 lp1.2 nr3,9.7861,30.9236,13.5
+Exp 5: 3 layers,beam10 lp1.2 nr3,9.9546,31.1307,11.3

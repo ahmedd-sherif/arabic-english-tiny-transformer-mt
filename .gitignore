@@ -44,3 +44,7 @@ memory.md
 tectonic.exe
 tectonic.zip
 *.code-workspace
+report_notes/
+GenAI_Usage_Statement.md
+LOG.md
+experiments/

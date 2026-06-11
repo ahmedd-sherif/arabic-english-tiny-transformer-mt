@@ -1,0 +1,11 @@
+config_id,beam,lp,nr,name
+D01,1,1.0,0,greedy
+D02,3,1.0,0,beam3 lp1.0 nr0
+D03,3,1.0,2,beam3 lp1.0 nr2
+D04,3,1.0,3,beam3 lp1.0 nr3
+D05,5,1.0,2,beam5 lp1.0 nr2
+D06,5,1.0,3,beam5 lp1.0 nr3
+D07,3,0.8,3,beam3 lp0.8 nr3
+D08,3,1.2,3,beam3 lp1.2 nr3
+D09,5,0.8,3,beam5 lp0.8 nr3
+D10,5,1.2,3,beam5 lp1.2 nr3

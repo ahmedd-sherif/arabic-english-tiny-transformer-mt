@@ -1,0 +1,7 @@
+local_id,old_id,name,greedy_bleu,greedy_chrf,beam3nr3_bleu,beam3nr3_chrf,beam3nr3_rep_pct
+T-D,E2,Label smoothing 0.1,7.1254,26.3022,9.0322,28.517,13.1
+T-B,E3,AdamW + weight decay 1e-4,6.4517,25.7754,8.6136,28.237,14.8
+T-A,E0/original,"Baseline (Adam, dropout 0.1)",6.7979,25.1414,7.9885,26.8619,10.1
+T-C,E6,Weight tying,6.7299,24.8314,7.9453,26.5252,12.6
+T-F,E11,LR inverse-sqrt warmup,4.2199,21.2461,6.0988,23.665,15.0
+T-E,E1,Dropout 0.3,3.4676,20.252,6.0312,23.6215,16.7
