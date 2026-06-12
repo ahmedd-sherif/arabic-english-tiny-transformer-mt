@@ -1,82 +1,126 @@
 # Low-Resource Arabic→English NMT with a Tiny Transformer
 
-A Master's Deep Learning project: training a compact encoder–decoder Transformer **from
-scratch, CPU-only**, for Arabic→English translation in a low-resource setting (~50k sentence
-pairs), then improving it through a controlled study of **decoding** and **regularization**
-ablations. The project is **notebook-first**; `src/` and `scripts/` are helper/reproducibility
-mirrors used by the notebooks.
+A Master's Deep Learning project: training a compact encoder–decoder Transformer **from scratch,
+CPU-first**, for Arabic→English translation in a low-resource setting (~50k sentence pairs), then
+improving it through a controlled study of training and decoding choices grouped into **six
+categories (A–F), 22 experiments**. Every notebook is **self-contained** — the model, training
+loop and decoding are defined inside them; no project `.py` imports needed.
 
-- **Data:** IWSLT 2017 Arabic-English (TED talks). Raw ~231k train pairs sampled to ~50k.
-- **Tokenization:** SentencePiece BPE, separate 8k Arabic / 8k English vocabularies.
-- **Model:** tiny Transformer — d_model=128, 4 heads, 2 enc / 2 dec layers, ff=512, dropout=0.1,
-  **4,006,208 trainable params**.
-- **Hardware:** CPU-only.
+- **Data:** IWSLT 2017 Arabic–English (TED talks); 231,713 raw pairs → 50,000 sampled after filtering.
+- **Tokenization:** SentencePiece BPE, separate 8,000-piece Arabic and English vocabularies.
+- **Model:** tiny Transformer — d_model=128, 4 heads, 2 encoder / 2 decoder layers, FFN=512 (~4M parameters).
+- **Training:** 60 epochs, seed 42, Adam lr=3e-4, early stopping. CPU-first by design (see *Compute disclosure* below).
 
-## Final result (full test, 8,491 examples)
+---
 
-**Final / best model: the AdamW-trained Transformer (E3, weight_decay=1e-4) decoded with beam
-search `beam=3, length_penalty=1.2, no_repeat_ngram_size=3`** (decoding tuned in E15, notebook 10).
+## Final result (full test set — 8,491 examples)
 
-- **BLEU = 8.1231**
-- **chrF++ = 27.6255**
-- **Repetition = 19.2%** (down from ~50% for the original greedy model)
+**Final system: weight decay 1e-4, decoded with beam=10, length-penalty=1.2, no_repeat_ngram_size=3.**
 
-*(E7's combined-best was E3 + beam3 lp1.0 nr3 = 7.9076 / 26.9301; the final E15 decoding sweep
-then found `length_penalty=1.2` improves it by +0.22 BLEU / +0.70 chrF++ — decoding-only, no
-retraining. The lp1.0 setting had slightly lower repetition (16.4%); lp1.2 trades a little
-repetition for better BLEU and chrF++.)*
+| Metric | Dictionary baseline | Final model |
+|---|---|---|
+| BLEU | 4.78 | **19.91** |
+| chrF++ | 25.65 | **42.24** |
+| Repetition | — | 4.6% |
 
-It beats the dictionary baseline on **both** metrics. **E7 is a *decision*, not a new training
-run:** stacking each ablation's best setting (dropout 0.1, label-smoothing 0.0, fixed LR, no
-weight tying, **AdamW wd 1e-4**) decoded with **nr3** reduces to exactly **E3 + nr3**, which is
-already trained and evaluated.
+The final model far outperforms the dictionary baseline on both metrics.
 
-What moved the needle:
-- **Decoding (E14 `no_repeat_ngram=3`) was the single biggest improvement** — it lifts every
-  model and resolved the earlier BLEU-vs-chrF++ disagreement (chrF++ now exceeds the baseline).
-- **E3 (AdamW) was the only *training* ablation that improved the model.**
-- **E11 (LR warmup), E1 (dropout 0.3), and E2 (label smoothing 0.1) were negative.**
-- **E6 (weight tying) is an *efficiency* variant** (2.98M params, ~same BLEU, lower chrF++) — not
-  the final quality model.
+**Key finding — weight decay is the dominant factor.** Among all 22 training ablations, adding Adam
+weight decay `1e-4` produces by far the largest improvement (BLEU 18.79 vs ~6–10 for all other
+changes). This was **verified with a control run (B3):** identical code, weight decay turned off —
+the control lands at validation loss ≈ 4.0 exactly like the plain baseline, while the
+weight-decay run reaches ≈ 2.88. The gain is genuinely weight decay.
 
-### Full comparison (full test, 8,491; sacreBLEU on detokenized English, identical references)
+---
 
-| System | Decoding | BLEU | chrF++ | Repetition | Verdict |
-|---|---|---:|---:|---:|---|
-| **E3 AdamW wd1e-4** | beam3 **lp1.2** nr3 (E15) | **8.1231** | **27.6255** | 19.2% | **Final / best** |
-| E3 AdamW wd1e-4 | beam5 lp1.2 nr3 (E15) | 8.0878 | 27.4195 | 17.4% | ~ties, slower |
-| E3 AdamW wd1e-4 | beam3 lp1.0 nr3 | 7.9076 | 26.9301 | 16.4% | prior best (superseded) |
-| E6 weight tying | beam3 lp1.0 nr3 | 7.7168 | 25.5947 | 17.4% | Efficient variant (2.98M params) |
-| E14 original | beam3 lp1.0 nr3 | 7.7095 | 26.5320 | 15.3% | Best decoding-only |
-| Original beam3 | beam3 lp1.0 | 7.5338 | 24.9288 | N/A | Earlier best decoding |
-| E2 label smoothing | beam3 lp1.0 | 7.3685 | 25.3485 | N/A | Negative / mixed |
-| Original greedy | greedy | 6.2172 | 24.6435 | 49.8% | Initial neural baseline |
-| E11 LR warmup | beam3 lp1.0 nr3 | 5.6777 | 22.8403 | 18.7% | Negative |
-| Dictionary baseline | position dictionary | 4.7777 | 25.6503 | N/A | Lexical baseline |
-| E1 dropout 0.3 | beam3 lp1.0 nr3 | 4.6882 | 21.1459 | 18.6% | Negative |
+## Notebook workflow (run in order)
 
-BLEU is stable between the 1,000-sample subset and the full test (Δ < 0.07), so the smaller-sample
-numbers were representative.
+| # | Notebook | Purpose |
+|---|---|---|
+| 01 | `notebooks/01_data_preparation.ipynb` | Download IWSLT 2017, filter, deduplicate, sample 50k, save clean splits |
+| 02 | `notebooks/02_analysis_and_tokenization.ipynb` | EDA plots, train SentencePiece BPE (8K vocab each), encode all splits, verify roundtrip |
+| 03 | `notebooks/03_dictionary_baseline.ipynb` | Non-neural dictionary baseline — most frequent English piece per Arabic position, BLEU + chrF++ |
+| 04 | `notebooks/04_training_ablation_experiments.ipynb` | **Training ablations (categories A–F, 22 experiments)** — one Config per experiment, shared `load_or_train`; leaderboard + top-3 checkpoints |
+| 05 | `notebooks/05_decoding_ablation_experiments.ipynb` | **Decoding sweep** on the top-3 checkpoints — 7 configs × 3 models → full-test evaluation → locks the final model |
+| 06 | `notebooks/06_final_results_and_error_analysis.ipynb` | Final model vs baseline, ablation summary, categorized error analysis, example translations |
 
-### Key result files
-- `outputs/tables/final_ablation_results.csv` — the master ablation comparison (table above).
-- `outputs/tables/final_main_results.csv` — all systems/decodings with full + 1,000-subset scores.
-- `outputs/tables/experiment_registry.csv` — every experiment, status, and metrics.
-- `report_notes/ablation_notes.md` — ablation write-up, findings, figure captions, final-model statement.
-- `outputs/figures/ablation_bleu_comparison.png`, `ablation_chrf_comparison.png`,
-  `ablation_repetition_comparison.png` — comparison plots.
+Each notebook loads its inputs from the previous step's outputs. Checkpoints are loaded if they
+exist (`load_or_train` logic), so re-running is fast. Original exploratory drafts are in
+`notebooks/archive_original/`.
 
-## Data layout (not committed — large / teammate-owned)
+---
 
-```text
-Data/
-  tokenized/{train,validation,test}.{ar,en}.bpe
-  vocab/sp_{ar,en}.{model,vocab}     # SentencePiece; .vocab = subword tokens, not embeddings
+## Experiment categories
+
+Checkpoints and per-experiment training logs mirror the category hierarchy:
+
+```
+outputs/checkpoints/
+  baseline/                              # plain Adam (reference)
+  _control/                              # B3 same-code control (wd=0)
+  A_training_objective/
+    exp1_label_smoothing/                # A1: label smoothing 0.1
+    exp2_focal_loss/                     # A2: focal loss γ=2
+  B_regularization/
+    exp1_dropout/                        # B1: dropout 0.3
+    exp2_weight_decay/                   # B2: weight decay 1e-4  ← winner
+    exp3_rdrop/                          # B4: R-Drop α=0.7
+  C_optimization/
+    exp1_adamw/                          # C1: AdamW wd 1e-4
+    exp2_lr_warmup/                      # C2: inverse-sqrt warmup
+    exp3_cosine_scheduler/               # C3: cosine annealing
+    exp4_curriculum/                     # C4: curriculum learning
+  D_architecture/
+    exp1_weight_tying/                   # D1: weight tying
+    exp2_layers/                         # D2: 4+4 layers
+    exp3_embedding_size/                 # D3: d_model=256
+    exp4_depth1/                         # D4: 1 layer
+    exp5_depth3/                         # D5: 3 layers
+    exp6_width64/                        # D6: d_model=64
+    exp7_gelu/                           # D7: GELU activation
+  E_data/
+    exp1_size5k/  exp2_size10k/  exp3_size25k/  exp4_rareword/
+    bpe_vocab_4000/  bpe_vocab_12000/
+  F_combined/
+    exp1_combined/                       # F1: wd + ls + tying + warmup
+  baselines/
+    lstm_seq2seq/                        # LSTM seq2seq comparison
+  legacy_40epoch/                        # original 40-epoch midterm checkpoint
 ```
 
-Splits after `max_len=80` BPE filtering: train 49,441 / val 869 / test 8,491.
+`.pt` files are gitignored. Training logs are at
+`outputs/tables/<category>/<experiment>/training_log.csv`.
 
-## Environment (CPU-only, Python 3.12)
+---
+
+## Ablation results (top results by training BLEU, beam3 nr3 on 1k subset)
+
+| Rank | Experiment | BLEU | chrF++ | Rep% |
+|---|---|---|---|---|
+| 1 | **B2: Weight decay 1e-4** | **18.79** | **41.04** | 4.8 |
+| 2 | F1: Combined (wd+ls+tie+warmup) | 12.15 | 33.07 | 14.5 |
+| 3 | D5: 3 encoder/decoder layers | 9.63 | 30.42 | 13.8 |
+| 4 | A1: Label smoothing 0.1 | 9.03 | 28.52 | 13.1 |
+| 5 | D2: 4+4 layers | 8.86 | 29.31 | 13.4 |
+| — | Reference (plain Adam) | 7.99 | 26.86 | 10.1 |
+
+Full results in `outputs/tables/training_comparison.csv`.
+
+---
+
+## Compute disclosure
+
+The project is CPU-first by design; all evaluation and decoding ran on CPU.
+**Some training experiments were run on an NVIDIA RTX 5000 GPU** to reduce wall-clock time
+(specifically: B2 weight decay, D2 4+4 layers, D3 d_model=256, B4 R-Drop, C4 Curriculum,
+D4 depth-1, D5 depth-3, D6 d_model=64, E1–E4 data-size, F1 combined — 13 experiments total).
+All other experiments ran on CPU. The training logs carry a `device` column (e.g.,
+`cuda (RTX 5000)` or `cpu`) and real per-epoch times. Checkpoints are saved CPU-portable and
+load on any hardware.
+
+---
+
+## Environment
 
 ```bash
 python -m venv .venv
@@ -84,75 +128,34 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-In Jupyter/VS Code, select the kernel **"Low Resource MT (.venv Python 3.12)"**.
+Select the Jupyter kernel **"Low Resource MT (.venv Python 3.12)"**.
 
-## Notebook workflow (run in order)
+A separate `.venv_gpu` with a CUDA build of torch was used only during the GPU training runs;
+it is gitignored.
 
-| # | Notebook | Purpose |
-|---|---|---|
-| 01 | `notebooks/01_data_preparation.ipynb` | Cleaning, Arabic normalization, splits (teammate) |
-| 02 | `notebooks/02_data_analysis_and_bpe_verification.ipynb` | EDA + SentencePiece BPE + round-trip checks |
-| 03 | `notebooks/03_dictionary_baseline.ipynb` | Dictionary position baseline + BLEU/chrF++ |
-| 04 | `notebooks/04_tiny_transformer_training.ipynb` | Checkpoint-safe CPU training + resume + CPU/DataLoader benchmark |
-| 05 | `notebooks/05_full_evaluation_and_error_analysis.ipynb` | Full-test evaluation, curves, qualitative + error analysis |
-| 06 | `notebooks/06_ablation_studies.ipynb` | **E13 beam-search** decoding sweep (beam size × length penalty) |
-| 07 | `notebooks/07_training_ablations.ipynb` | **E2 label-smoothing** training ablation |
-| 08 | `notebooks/08_ablation_summary.ipynb` | **Consolidated comparison of all ablations + the E7 final-model decision** |
-| 09 | `notebooks/09_decoding_repetition_control.ipynb` | **E14 `no_repeat_ngram` decoding sweep** (the biggest single improvement) |
-| 10 | `notebooks/10_final_e3_decoding_sweep.ipynb` | **E15 final decoding sweep on the E3 checkpoint** → locks `beam3 lp1.2 nr3` as the final model |
+---
 
-Training ablations **E11 / E1 / E3 / E6** were run with the checkpoint-safe engine
-`scripts/run_ablation.py` (isolated checkpoints under `outputs/checkpoints/<exp>/`) and are
-consolidated in notebook 08. Superseded notebooks are kept under `notebooks/archive/`.
+## Repository layout
 
-### Checkpoint / resume behavior
-Training is CPU-only and may take hours, so the training notebooks are **checkpoint-safe**: if a
-best checkpoint exists and `FORCE_RESTART=False` they load it instead of retraining; if a latest
-checkpoint exists they resume from the next epoch; latest + best checkpoints and the training log
-are saved every epoch.
-
-### CPU / DataLoader settings (benchmarked, not guessed)
-A benchmark in notebook 04 (`outputs/tables/cpu_dataloader_benchmark.csv`) shows **8 torch
-threads** is the throughput sweet spot (~200 samples/s) — `cores−1` is ~44% slower for this tiny
-model — and DataLoader `num_workers>0` doesn't help (and hangs in-notebook on Windows). Chosen:
-`TORCH_THREADS = min(8, CPU_CORES)`, `DATALOADER_WORKERS = 0`. The benchmark evidence stays visible
-inside notebook 04.
-
-## Outputs
-
-```text
+```
+notebooks/          # 6 numbered notebooks (run in order)
+src/                # model, dataset, training utilities (mirrored in notebooks)
+config/             # hyperparameter YAML
+Data/               # tokenized BPE files and vocab (gitignored)
 outputs/
-  tables/        result CSVs (final_ablation_results, final_main_results, experiment_registry, per-exp e*_*.csv, logs)
-  figures/       loss curves + ablation/comparison plots
-  translations/  sample/full predictions
-  examples/      qualitative example tables + per-exp predictions
-  checkpoints/   model .pt files (gitignored, large): best_full_model.pt + e2/e11/e1/e3/e6 dirs
-  logs/          repo_audit.md, plan_summary.md
-report_notes/    evidence/notes for the IEEE report (not final prose)
+  checkpoints/      # saved .pt checkpoints (gitignored)
+  tables/           # CSVs: training logs, evaluation results, ablation summary
+  figures/          # plots (loss curves, BLEU comparison, error analysis)
+  translations/     # prediction CSV files
+  examples/         # qualitative translation examples
+report_notes/       # evidence notes for the written report
 ```
 
-## Reproducing the results (no retraining needed)
-From the repaired environment:
-- Baseline + full-test transformer eval: notebooks `03` and `05` (load `best_full_model.pt`).
-- Decoding study (E14): notebook `09`; final comparison + E7 decision: notebook `08`.
-- One-command mirrors: `python scripts/run_full_eval.py` (greedy full test),
-  `python scripts/run_ablation.py --exp E3` (retrains E3 only if you want to regenerate it).
+---
 
 ## Limitations
-Absolute BLEU is low — inherent to a tiny, from-scratch, CPU-only, low-resource setup. The final
-recipe (AdamW + `no_repeat_ngram=3` decoding) cuts degenerate repetition from ~50% to ~16% and
-beats the dictionary baseline on both metrics, but quality is still modest. Several training
-ablations were negative (label smoothing, LR warmup, dropout 0.3) and are reported honestly. The
-40-epoch models' validation loss was still decreasing at the cap (mildly undertrained). See
-`report_notes/limitations_and_future_work.md` and `LOG.md`.
 
-## Report notes
-`report_notes/` holds evidence/notes for the IEEE report (not final prose): metric definitions
-(BLEU, chrF++), results interpretation, **ablation notes (`ablation_notes.md`)**, error analysis,
-limitations/future work, a recent-literature checklist, and oral-defense Q&A.
-
-## Project docs
-- `memory.md` — full project context and current status (read first).
-- `LOG.md` — development log. `EXPERIMENT_LOG.md` — per-run records.
-- `Docs/Plan/nmt_final_agent_execution_plan_merged.md` — authoritative execution plan.
-- `GenAI_Usage_Statement.md` — honest GenAI disclosure.
+Absolute BLEU is still modest for a tiny, from-scratch model on 50k pairs. The final recipe
+(weight decay + `no_repeat_ngram` decoding) reaches BLEU ~20 / chrF++ ~42 with ~5% repetition
+and ~87% adequate outputs. Future work: more training data, human evaluation, attention
+heatmaps, COMET metric, checkpoint ensembling.
